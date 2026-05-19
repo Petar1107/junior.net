@@ -1,25 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AbySalto.Junior.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace AbySalto.Junior.Infrastructure.Database
+namespace AbySalto.Junior.Infrastructure.Database;
+
+public class ApplicationDbContext
+    : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>, IApplicationDbContext
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
+    }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
 
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+    }
 
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-        }
-
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            return await base.SaveChangesAsync(cancellationToken);
-        }
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }
