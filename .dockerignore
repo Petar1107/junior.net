@@ -1,0 +1,21 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# Rider / IDE
+**/.idea/
+**/.vs/
+**/.vscode/
+
+# Test output
+**/TestResults/
+
+# Git
+.git/
+.gitignore
+
+# macOS
+.DS_Store
+
+# Docker
+docker-compose.override.yml
