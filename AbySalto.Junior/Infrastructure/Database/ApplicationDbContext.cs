@@ -1,4 +1,5 @@
-﻿using AbySalto.Junior.Domain.Entities.Identity;
+﻿using AbySalto.Junior.Domain.Entities;
+using AbySalto.Junior.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,8 @@ public class ApplicationDbContext
         : base(options)
     {
     }
+
+    public DbSet<Product> Products => Set<Product>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
