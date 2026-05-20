@@ -25,5 +25,12 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(product => product.IsActive)
             .HasDefaultValue(true);
+
+        builder.HasIndex(product => product.Name)
+            .IsUnique();
+            
+        builder.ToTable(table => table.HasCheckConstraint(
+            "CK_Products_UnitsInStock",
+            "\"UnitsInStock\" >= 0"));
     }
 }
