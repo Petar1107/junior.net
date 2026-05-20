@@ -1,4 +1,7 @@
+using AbySalto.Junior.Application.Services;
+using AbySalto.Junior.Application.Services.Impl;
 using AbySalto.Junior.Domain.Entities.Identity;
+using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +15,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+        builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
@@ -19,6 +27,31 @@ public class Program
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant", Version = "v1" });
+
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Bearer token. Paste the access token value without the 'Bearer' prefix.",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer",
+                        },
+                    },
+                    Array.Empty<string>()
+                },
+            });
         });
 
         builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
@@ -43,6 +76,8 @@ public class Program
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        builder.Services.AddJwtAuthentication(builder.Configuration);
 
         var app = builder.Build();
 
