@@ -2,7 +2,6 @@ namespace AbySalto.Junior.Domain.Enums;
 
 public enum UserRole
 {
-    Customer=0,
-    Staff=1,
-    Admin=2,
+    Customer = 0,
+    Admin = 1,
 }

@@ -8,7 +8,7 @@ namespace AbySalto.Junior;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +48,8 @@ public class Program
 
         if (app.Environment.IsDevelopment())
         {
+            await DatabaseMigration.MigrateAndSeedAsync(app.Services);
+
             app.MapOpenApi();
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -62,6 +64,6 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
-        app.Run();
+        await app.RunAsync();
     }
 }
