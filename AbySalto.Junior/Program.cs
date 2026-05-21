@@ -49,6 +49,9 @@ public class Program
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant", Version = "v1" });
             c.SchemaFilter<EnumSchemaFilter>();
+            c.SchemaFilter<RequestSchemaExamplesFilter>();
+            c.OperationFilter<RequestBodyExamplesOperationFilter>();
+            c.OperationFilter<ListQueryExamplesOperationFilter>();
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
