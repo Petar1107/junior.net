@@ -41,7 +41,7 @@ public class ProductService : IProductService
 
         if (await _repository.ExistsByNameAsync(request.Name, cancellationToken: cancellationToken))
         {
-            throw new BadRequestException("A product with this name already exists.");
+            throw new ConflictException("A product with this name already exists.");
         }
 
         var product = _mapper.Map<Product>(request);
@@ -154,7 +154,7 @@ public class ProductService : IProductService
 
         if (await _repository.ExistsByNameAsync(request.Name, id, cancellationToken))
         {
-            throw new BadRequestException("A product with this name already exists.");
+            throw new ConflictException("A product with this name already exists.");
         }
 
         _mapper.Map(request, product);

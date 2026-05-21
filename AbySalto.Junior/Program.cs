@@ -6,6 +6,7 @@ using FluentValidation;
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
+using AbySalto.Junior.Infrastructure.Middleware;
 using AbySalto.Junior.Infrastructure.Repositories;
 using AbySalto.Junior.Infrastructure.Repositories.Impl;
 using Microsoft.AspNetCore.Identity;
@@ -104,6 +105,7 @@ public class Program
             });
         }
 
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
