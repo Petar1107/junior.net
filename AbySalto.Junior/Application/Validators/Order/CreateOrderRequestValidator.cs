@@ -7,6 +7,10 @@ public class CreateOrderRequestValidator : AbstractValidator<CreateOrderRequest>
 {
     public CreateOrderRequestValidator()
     {
+        RuleFor(x => x.CustomerId)
+            .NotEqual(Guid.Empty)
+            .When(x => x.CustomerId.HasValue);
+
         RuleFor(x => x.CustomerName)
             .NotEmpty()
             .MaximumLength(200)
