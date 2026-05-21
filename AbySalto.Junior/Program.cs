@@ -1,8 +1,17 @@
+using AbySalto.Junior.Application.MappingProfiles;
 using AbySalto.Junior.Application.Services;
 using AbySalto.Junior.Application.Services.Impl;
+using AbySalto.Junior.Application.Validators.Product;
+using FluentValidation;
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using AbySalto.Junior.Infrastructure.Middleware;
+using AbySalto.Junior.Infrastructure.OpenApi;
+using AbySalto.Junior.Infrastructure.Repositories;
+using AbySalto.Junior.Infrastructure.Repositories.Impl;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -19,14 +28,25 @@ public class Program
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
+        builder.Services.AddScoped<IProductService, ProductService>();
 
-        builder.Services.AddControllers();
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
+        builder.Services.AddAutoMapper(_ => { }, typeof(ProductProfile).Assembly);
+
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true));
+            });
         builder.Services.AddOpenApi();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant", Version = "v1" });
+            c.SchemaFilter<EnumSchemaFilter>();
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -94,6 +114,7 @@ public class Program
             });
         }
 
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();

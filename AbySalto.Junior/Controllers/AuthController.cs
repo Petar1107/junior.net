@@ -1,7 +1,7 @@
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Domain.Enums;
 using AbySalto.Junior.Infrastructure.Auth;
-using AbySalto.Junior.Application.Models.Auth;
+using AbySalto.Junior.Application.DTOs.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

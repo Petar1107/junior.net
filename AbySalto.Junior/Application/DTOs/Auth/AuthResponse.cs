@@ -1,4 +1,4 @@
-namespace AbySalto.Junior.Application.Models.Auth;
+namespace AbySalto.Junior.Application.DTOs.Auth;
 
 public class AuthResponse
 {
