@@ -30,6 +30,8 @@ public class Program
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
         builder.Services.AddAutoMapper(_ => { }, typeof(ProductProfile).Assembly);
@@ -47,6 +49,9 @@ public class Program
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant", Version = "v1" });
             c.SchemaFilter<EnumSchemaFilter>();
+            c.SchemaFilter<RequestSchemaExamplesFilter>();
+            c.OperationFilter<RequestBodyExamplesOperationFilter>();
+            c.OperationFilter<ListQueryExamplesOperationFilter>();
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
