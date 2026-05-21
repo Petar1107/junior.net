@@ -6,7 +6,10 @@ using FluentValidation;
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AbySalto.Junior.Infrastructure.Middleware;
+using AbySalto.Junior.Infrastructure.OpenApi;
 using AbySalto.Junior.Infrastructure.Repositories;
 using AbySalto.Junior.Infrastructure.Repositories.Impl;
 using Microsoft.AspNetCore.Identity;
@@ -31,13 +34,19 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
         builder.Services.AddAutoMapper(_ => { }, typeof(ProductProfile).Assembly);
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true));
+            });
         builder.Services.AddOpenApi();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant", Version = "v1" });
+            c.SchemaFilter<EnumSchemaFilter>();
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
