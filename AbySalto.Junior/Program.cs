@@ -1,5 +1,8 @@
+using AbySalto.Junior.Application.MappingProfiles;
 using AbySalto.Junior.Application.Services;
 using AbySalto.Junior.Application.Services.Impl;
+using AbySalto.Junior.Application.Validators.Product;
+using FluentValidation;
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
@@ -19,6 +22,9 @@ public class Program
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
+        builder.Services.AddAutoMapper(_ => { }, typeof(ProductProfile).Assembly);
 
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
