@@ -6,6 +6,8 @@ using FluentValidation;
 using AbySalto.Junior.Domain.Entities.Identity;
 using AbySalto.Junior.Infrastructure.Auth;
 using AbySalto.Junior.Infrastructure.Database;
+using AbySalto.Junior.Infrastructure.Repositories;
+using AbySalto.Junior.Infrastructure.Repositories.Impl;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -22,6 +24,7 @@ public class Program
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<CreateProductRequestValidator>();
         builder.Services.AddAutoMapper(_ => { }, typeof(ProductProfile).Assembly);
