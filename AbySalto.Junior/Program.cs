@@ -106,10 +106,13 @@ public class Program
 
         var app = builder.Build();
 
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
         {
             await DatabaseMigration.MigrateAndSeedAsync(app.Services);
+        }
 
+        if (app.Environment.IsDevelopment())
+        {
             app.MapOpenApi();
             app.UseSwagger();
             app.UseSwaggerUI(options =>

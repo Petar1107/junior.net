@@ -57,7 +57,7 @@ public class OrderService : IOrderService
         NormalizeCreateRequest(request);
         await ValidateAsync(_createValidator, request, cancellationToken);
 
-        if (HasDuplicateProducts(request.Items))
+        if (OrderRules.HasDuplicateProducts(request.Items))
         {
             throw new BadRequestException("Each product can only appear once per order.");
         }
@@ -335,7 +335,7 @@ public class OrderService : IOrderService
             throw new BadRequestException("Completed orders cannot be updated.");
         }
 
-        if (!IsValidStatusTransition(order.Status, newStatus))
+        if (!OrderRules.IsValidStatusTransition(order.Status, newStatus))
         {
             throw new BadRequestException(
                 $"Cannot change order status from '{order.Status}' to '{newStatus}'.");
@@ -344,11 +344,6 @@ public class OrderService : IOrderService
         order.Status = newStatus;
     }
     
-    private static bool IsValidStatusTransition(OrderStatus current, OrderStatus next) =>
-        (current, next) is
-        (OrderStatus.Pending, OrderStatus.InPreparation)
-        or (OrderStatus.InPreparation, OrderStatus.Completed);
-
     private void ApplyHeaderUpdates(Order order, UpdateOrderRequest request)
     {
         if (request.CustomerName is not null)
@@ -488,9 +483,6 @@ public class OrderService : IOrderService
             Quantity = request.Quantity,
             DiscountPercentage = request.DiscountPercentage ?? 0m,
         };
-
-    private static bool HasDuplicateProducts(IEnumerable<CreateOrderItemRequest> items) =>
-        items.GroupBy(item => item.ProductId).Any(group => group.Count() > 1);
 
     private static IQueryable<Order> ApplySorting(IQueryable<Order> query, OrderListQuery listQuery)
     {

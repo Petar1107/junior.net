@@ -20,6 +20,10 @@ public static class DatabaseMigration
         }
 
         await IdentityDataSeeder.SeedAsync(scopedServices, configuration);
-        await DevelopmentDataSeeder.SeedAsync(scopedServices, environment);
+
+        if (environment.IsDevelopment())
+        {
+            await DevelopmentDataSeeder.SeedAsync(scopedServices, environment);
+        }
     }
 }
