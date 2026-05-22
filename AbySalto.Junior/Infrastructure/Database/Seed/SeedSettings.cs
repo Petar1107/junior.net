@@ -9,4 +9,12 @@ public class SeedSettings
     public string AdminFirstName { get; set; } = "Admin";
 
     public string AdminLastName { get; set; } = "User";
+
+    public string CustomerEmail { get; set; } = string.Empty;
+
+    public string CustomerPassword { get; set; } = string.Empty;
+
+    public string CustomerFirstName { get; set; } = "Ana";
+
+    public string CustomerLastName { get; set; } = "Horvat";
 }

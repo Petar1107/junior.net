@@ -1,3 +1,4 @@
+using AbySalto.Junior.Infrastructure.Database.Seed;
 using Microsoft.EntityFrameworkCore;
 
 namespace AbySalto.Junior.Infrastructure.Database;
@@ -11,6 +12,7 @@ public static class DatabaseMigration
 
         var context = scopedServices.GetRequiredService<ApplicationDbContext>();
         var configuration = scopedServices.GetRequiredService<IConfiguration>();
+        var environment = scopedServices.GetRequiredService<IHostEnvironment>();
 
         if (context.Database.IsNpgsql())
         {
@@ -18,5 +20,6 @@ public static class DatabaseMigration
         }
 
         await IdentityDataSeeder.SeedAsync(scopedServices, configuration);
+        await DevelopmentDataSeeder.SeedAsync(scopedServices, environment);
     }
 }

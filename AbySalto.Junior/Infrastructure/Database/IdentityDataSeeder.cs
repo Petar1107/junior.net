@@ -21,7 +21,25 @@ public static class IdentityDataSeeder
         }
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        await SeedAdminUserAsync(userManager, seedSettings);
+        await SeedUserAsync(
+            userManager,
+            seedSettings.AdminEmail,
+            seedSettings.AdminPassword,
+            seedSettings.AdminFirstName,
+            seedSettings.AdminLastName,
+            UserRole.Admin);
+
+        if (!string.IsNullOrWhiteSpace(seedSettings.CustomerEmail) &&
+            !string.IsNullOrWhiteSpace(seedSettings.CustomerPassword))
+        {
+            await SeedUserAsync(
+                userManager,
+                seedSettings.CustomerEmail,
+                seedSettings.CustomerPassword,
+                seedSettings.CustomerFirstName,
+                seedSettings.CustomerLastName,
+                UserRole.Customer);
+        }
     }
 
     private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
@@ -42,37 +60,40 @@ public static class IdentityDataSeeder
         }
     }
 
-    private static async Task SeedAdminUserAsync(
+    private static async Task SeedUserAsync(
         UserManager<ApplicationUser> userManager,
-        SeedSettings seedSettings)
+        string email,
+        string password,
+        string firstName,
+        string lastName,
+        UserRole role)
     {
-        var existingUser = await userManager.FindByEmailAsync(seedSettings.AdminEmail);
-        if (existingUser is not null)
+        if (await userManager.FindByEmailAsync(email) is not null)
         {
             return;
         }
 
-        var admin = new ApplicationUser
+        var user = new ApplicationUser
         {
-            UserName = seedSettings.AdminEmail,
-            Email = seedSettings.AdminEmail,
+            UserName = email,
+            Email = email,
             EmailConfirmed = true,
-            FirstName = seedSettings.AdminFirstName,
-            LastName = seedSettings.AdminLastName,
+            FirstName = firstName,
+            LastName = lastName,
         };
 
-        var createResult = await userManager.CreateAsync(admin, seedSettings.AdminPassword);
+        var createResult = await userManager.CreateAsync(user, password);
         if (!createResult.Succeeded)
         {
             throw new InvalidOperationException(
-                $"Failed to create development admin user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                $"Failed to create development user '{email}': {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
         }
 
-        var roleResult = await userManager.AddToRoleAsync(admin, UserRoleNames.From(UserRole.Admin));
+        var roleResult = await userManager.AddToRoleAsync(user, UserRoleNames.From(role));
         if (!roleResult.Succeeded)
         {
             throw new InvalidOperationException(
-                $"Failed to assign Admin role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                $"Failed to assign {role} role to '{email}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
         }
     }
 }

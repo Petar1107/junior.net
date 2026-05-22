@@ -1,9 +1,24 @@
 using AbySalto.Junior.Domain.Enums;
+using AbySalto.Junior.Infrastructure.Database.Seed;
 
 namespace AbySalto.Junior.Infrastructure.OpenApi;
 
 internal static class SwaggerExamplePayloads
 {
+    public static object SeededAdminLogin(SeedSettings? settings) => new
+    {
+        email = string.IsNullOrWhiteSpace(settings?.AdminEmail) ? "admin@example.com" : settings.AdminEmail,
+        password = string.IsNullOrWhiteSpace(settings?.AdminPassword) ? "Admin123!" : settings.AdminPassword,
+    };
+
+    public static object Register => new
+    {
+        email = "newuser@example.com",
+        password = "Register123!",
+        firstName = "New",
+        lastName = "User",
+    };
+
     public const string PlaceholderGuidNote =
         "Sample IDs are placeholders. Use product ids from GET /api/products and customer ids from registered users.";
 
